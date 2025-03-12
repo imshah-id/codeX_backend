@@ -3,7 +3,7 @@ import UserProgress from "../models/UserProgress.js";
 
 const progressRoute = express.Router();
 
-// 🔹 Get User Progress
+// ðŸ”¹ Get User Progress
 progressRoute.get("/:userId", async (req, res) => {
   try {
     const { userId } = req.params;
@@ -21,7 +21,7 @@ progressRoute.get("/:userId", async (req, res) => {
   }
 });
 
-// 🔹 Add a New Language to User's Progress
+// ðŸ”¹ Add a New Language to User's Progress
 progressRoute.post("/add", async (req, res) => {
   try {
     const { userId, language, topics = [] } = req.body;
@@ -59,7 +59,7 @@ progressRoute.post("/add", async (req, res) => {
   }
 });
 
-// 🔹 Update Progress (Mark Topic as Completed)
+// ðŸ”¹ Update Progress (Mark Topic as Completed)
 progressRoute.post("/complete", async (req, res) => {
   try {
     const { userId, language, topic } = req.body;
