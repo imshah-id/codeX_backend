@@ -9,7 +9,7 @@ import { authenticateUser, authorizeAdmin } from "./middleware/auth.js";
 import profileRoute from "./routes/profileRouthes.js";
 import progressRoute from "./routes/progressRoutes.js";
 dotenv.config();
-app.use(express.json());
+const app = express(); 
 const allowedOrigins = [
   "https://hi-codex.netlify.app",
 ];
