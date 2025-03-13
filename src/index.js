@@ -18,14 +18,9 @@ const app = express();
 // Middleware
 app.use(
   cors({
-    origin: (origin, callback) => {
-      if (!origin || allowedOrigins.includes(origin)) {
-        callback(null, true);
-      } else {
-        callback(new Error("Not allowed by CORS"));
-      }
-    },
-    credentials: true, // Allow cookies/auth headers if needed
+    origin: allowedOrigins,
+    credentials: true, // Allow cookies if needed
+    methods: ["GET", "POST", "PUT", "DELETE"],
   })
 );
 app.use(express.json());
