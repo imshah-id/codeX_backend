@@ -9,24 +9,17 @@ import { authenticateUser, authorizeAdmin } from "./middleware/auth.js";
 import profileRoute from "./routes/profileRouthes.js";
 import progressRoute from "./routes/progressRoutes.js";
 dotenv.config();
-const allowedOrigin = "https://hi-codex.netlify.app";
+const allowedOrigins = [
+  "https://hi-codex.netlify.app",
+];
 
 app.use(
   cors({
-    origin: allowedOrigin,
+    origin: allowedOrigins,
     credentials: true, // Allow cookies if needed
     methods: ["GET", "POST", "PUT", "DELETE"],
-    allowedHeaders: ["Content-Type", "Authorization"],
   })
 );
-
-app.use((req, res, next) => {
-  res.header("Access-Control-Allow-Origin", allowedOrigin);
-  res.header("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE");
-  res.header("Access-Control-Allow-Headers", "Content-Type, Authorization");
-  res.header("Access-Control-Allow-Credentials", "true");
-  next();
-});
 app.use(express.json());
 
 //middleware
