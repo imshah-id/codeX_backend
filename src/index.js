@@ -9,15 +9,23 @@ import { authenticateUser, authorizeAdmin } from "./middleware/auth.js";
 import profileRoute from "./routes/profileRouthes.js";
 import progressRoute from "./routes/progressRoutes.js";
 dotenv.config();
-
+const allowedOrigins = [
+  "https://hi-codex.netlify.app",
+  "http://localhost:5173",
+];
 const app = express();
 
 // Middleware
 app.use(
   cors({
-    origin: "https://hi-codex.netlify.app",
-    methods: "GET,POST,PUT,DELETE",
-    credentials: true,
+    origin: (origin, callback) => {
+      if (!origin || allowedOrigins.includes(origin)) {
+        callback(null, true);
+      } else {
+        callback(new Error("Not allowed by CORS"));
+      }
+    },
+    credentials: true, // Allow cookies/auth headers if needed
   })
 );
 app.use(express.json());
@@ -31,7 +39,7 @@ app.use("/api/admin", authenticateUser, authorizeAdmin, (req, res) => {
 // Routes
 app.use("/api/auth", authRoutes);
 app.use("/api/profile",profileRoute)
-app.use("/api/user/progress", progressRoute);
+app.use("/api/user/", progressRoute);
 // Connect to Database
 
 dataBB()

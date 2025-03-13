@@ -17,6 +17,7 @@ progressRoute.get("/:userId", async (req, res) => {
 
     res.json({ success: true, languages: progress.languages });
   } catch (error) {
+    console.error("Error fetching progress:", error);
     res.status(500).json({ success: false, error: "Server Error" });
   }
 });
@@ -27,25 +28,20 @@ progressRoute.post("/add", async (req, res) => {
     const { userId, language, topics = [] } = req.body;
 
     if (!userId || !language) {
-      return res
-        .status(400)
-        .json({
-          success: false,
-          message: "User ID and language are required.",
-        });
+      return res.status(400).json({
+        success: false,
+        message: "User ID and language are required.",
+      });
     }
 
     let progress = await UserProgress.findOne({ userId });
 
     if (!progress) {
-      progress = new UserProgress({ userId, languages: {} });
+      progress = new UserProgress({ userId, languages: new Map() });
     }
 
-    if (!progress.languages[language]) {
-      progress.languages[language] = {
-        completed: [],
-        pending: topics,
-      };
+    if (!progress.languages.has(language)) {
+      progress.languages.set(language, { completed: [], pending: topics });
     }
 
     await progress.save();
@@ -55,6 +51,7 @@ progressRoute.post("/add", async (req, res) => {
       progress,
     });
   } catch (error) {
+    console.error("Error adding language:", error);
     res.status(500).json({ success: false, error: "Server Error" });
   }
 });
@@ -65,12 +62,10 @@ progressRoute.post("/complete", async (req, res) => {
     const { userId, language, topic } = req.body;
 
     if (!userId || !language || !topic) {
-      return res
-        .status(400)
-        .json({
-          success: false,
-          message: "User ID, language, and topic are required.",
-        });
+      return res.status(400).json({
+        success: false,
+        message: "User ID, language, and topic are required.",
+      });
     }
 
     let progress = await UserProgress.findOne({ userId });
@@ -81,13 +76,13 @@ progressRoute.post("/complete", async (req, res) => {
         .json({ success: false, message: "User progress not found." });
     }
 
-    if (!progress.languages[language]) {
+    if (!progress.languages.has(language)) {
       return res
         .status(400)
         .json({ success: false, message: "Language not found." });
     }
 
-    const languageProgress = progress.languages[language];
+    const languageProgress = progress.languages.get(language);
 
     // Move topic from pending to completed
     if (!languageProgress.completed.includes(topic)) {
@@ -104,6 +99,7 @@ progressRoute.post("/complete", async (req, res) => {
       progress: progress.languages,
     });
   } catch (error) {
+    console.error("Error updating progress:", error);
     res.status(500).json({ success: false, error: "Server Error" });
   }
 });
